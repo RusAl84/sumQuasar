@@ -1,22 +1,49 @@
 <template>
   <q-page class="flex flex-center">
-    <q-input dense flat autofocus v-model="text"> </q-input>
-    <q-btn color="primary" @click="onSendClick"> Получить смысл </q-btn>
+    <q-card class="big-card" bordered>
+      <q-card class="box-card" bordered>
+        <q-card-section>
+          <q-input
+            class="textInput"
+            autofocus
+            filled
+            autogrow
+            type="textarea"
+            v-model="text"
+          >
+          </q-input> </q-card-section
+      ></q-card>
+      <q-card-actions class="flex flex-center">
+        <q-btn color="primary" @click="onSendClick">
+          Суммаризация текста
+        </q-btn>
+      </q-card-actions>
+    </q-card>
   </q-page>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
+import { useStore } from "vuex";
 import API from "../api/api";
 
 export default defineComponent({
   name: "PageIndex",
 
   setup() {
-    let text =
-      "Главный герой всю жизнь занимается финансовыми махинациями. Это не только приносит ему солидные деньги, но и удовольствие от столь рискованных предприятий. На этот раз он решает взломать компьютерную систему государственного банка и завладеть суммой денег, которой ему хватит до конца жизни. Но нужен напарник, хорошо разбирающийся в компьютерах. Он находит одного парня, отбывшего срок за финансовое преступление. Тот не хочет возвращаться в тюрьму и отказывает мошеннику, но вскоре соглашается. А немногим позже компьютерщик понимает, что на свою долю он может не рассчитывать: его попросту используют. Между напарниками начинается настоящая война за ещё не добытые деньги.";
+    let text = "";
+    //  "Главный герой всю жизнь занимается финансовыми махинациями. Это не только приносит ему солидные деньги, но и удовольствие от столь рискованных предприятий. На этот раз он решает взломать компьютерную систему государственного банка и завладеть суммой денег, которой ему хватит до конца жизни. Но нужен напарник, хорошо разбирающийся в компьютерах. Он находит одного парня, отбывшего срок за финансовое преступление. Тот не хочет возвращаться в тюрьму и отказывает мошеннику, но вскоре соглашается. А немногим позже компьютерщик понимает, что на свою долю он может не рассчитывать: его попросту используют. Между напарниками начинается настоящая война за ещё не добытые деньги.";
+    const $store = useStore();
+    const opti = computed({
+      get: () => $store.state.mes.opti,
+      set: (val) => {
+        $store.commit("mes/updateOpti", val);
+      },
+    });
     return {
+      $store,
       text,
+      opti,
     };
   },
   // // Хук который сработает когда страница создасться
@@ -39,8 +66,9 @@ export default defineComponent({
     // Реакция на кнопку отправки
     async onSendClick() {
       try {
-        this.mas = await API.sendMessage(this.text);
-        console.log(this.mas);
+        this.opti = await API.sendMessage(this.text);
+        console.log(this.opti);
+        this.$router.push("/vis");
       } catch (e) {
         console.error(e);
       }
@@ -49,3 +77,25 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.field-label {
+  vertical-align: middle;
+}
+.big-card {
+  height: 500px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px auto;
+}
+
+.box-card {
+  max-width: 100%;
+}
+.textInput {
+  margin: 20px auto;
+  padding: 30px 24px;
+}
+.tag-item {
+  margin-right: 15px;
+}
+</style>

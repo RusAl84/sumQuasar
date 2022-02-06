@@ -1,8 +1,11 @@
 <template>
-  <v-chart class="chart" :option="option" />
+  <q-page>
+    <v-chart class="chart" :option="$store.state.mes.opti" />
+  </q-page>
 </template>
 
 <script>
+// <v-chart class="chart" :option="option" />
 import { use } from "echarts/core";
 import * as echarts from "echarts";
 import "echarts-wordcloud";
@@ -16,6 +19,7 @@ import {
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 import { ref, defineComponent } from "vue";
+import { useStore } from "vuex";
 
 use([
   CanvasRenderer,
@@ -71,8 +75,8 @@ export default defineComponent({
         },
       ],
     });
-
-    return { option };
+    const $store = useStore();
+    return { option, $store };
   },
 });
 </script>
